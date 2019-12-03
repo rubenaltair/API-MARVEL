@@ -3,7 +3,7 @@ node_modules
 /dist
 
 #marvel api keys
-keys.js
+src.keys.js
 
 # local env files
 .env.local
