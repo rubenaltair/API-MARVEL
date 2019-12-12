@@ -1,47 +1,51 @@
 <template>
     <div class="comic">
-        <div class="contenedor-comic">
+        <h2 class="error" v-if="error.status">{{error.message}}</h2>
+        <div v-else class="contenedor-comic">
             <div class="contenido imagen">
-                <img :src= "url" alt="">
+                <img :src= "image.url" alt="">
             </div>
-                <div class="contenido texto" v-for= "libro in novelagrafica" :key= "libro.id">
-                    <h2>{{libro.title}}</h2>
-                    <div class="texto--contenedor">
-                        <p class="texto--contenedor__titulo">Description:</p>
-                        <p class="texto--contenedor__liteartura"
-                        v-if= "libro.description != null"
-                            >{{libro.description}}</p>
-                        <p class="texto--contenedor__liteartura" v-else
-                            >El contedino de este archivo es clasificado y carece de la autoridad suficiente acceder a el. Para mas información onsulte el serviciod e atención al cliente de S.H.I.E.L.D ¡HEIL HIDRA!</p>
-                   </div>
-                    <div class="texto--contenedor">
-                        <p class="texto--contenedor__titulo">Characters:</p>
-                        <ul 
-                            v-if= "libro.characters.available != 0">
-                                <li class="texto--contenedor__liteartura" 
-                                v-for= "personaje in libro.characters.items" 
-                                :key="personaje.name">{{personaje.name}}</li>
-                        </ul>
-                        <p class="texto--contenedor__liteartura" v-else>
-                        Lo sentimos, los personajes de esta historia se han convertido en polvo por culpa de Thanos. Le rogamos paciencia, los vengadores estan trabajando para solucionarlo. </p>
-                    </div>
-                    <div class="texto--contenedor">
-                        <p class="texto--contenedor__titulo">Price:</p>
-                        <div v-for= "precio in libro.prices" :key="precio.price">
-                            <p class="texto--contenedor__liteartura"
-                            v-if= "precio.price != 0 || null">
-                            {{precio.price}}</p>
-                            <p class="texto--contenedor__liteartura" v-else>
-                            ¡GRATIS!</p>
-                        </div>
-                    </div>
-                    <router-link class="enrutador" to= '/'>
-                            <button class="btn-volver">Inicio</button>
-                    </router-link>    
- 
+            <div class="contenido texto" v-for= "libro in novelagrafica" :key= "libro.id">
+                <h2>{{libro.title}}</h2>
+                <div class="texto--contenedor">
+                    <p class="texto--contenedor__titulo">Description:</p>
+                    <p class="texto--contenedor__liteartura"
+                    v-if= "libro.description != null"
+                    >{{libro.description}}</p>
+                    <p class="texto--contenedor__liteartura" v-else
+                    >El contedino de este archivo es clasificado y carece de la autoridad suficiente acceder a el. Para mas información consulte el serviciod e atención al cliente de S.H.I.E.L.D ¡HEIL HIDRA!</p>
                 </div>
+                <div class="texto--contenedor">
+                    <p class="texto--contenedor__titulo">Characters:</p>
+                    <ul v-if= "libro.characters.available != 0">
+                        <li class="texto--contenedor__liteartura" 
+                        v-for= "personaje in libro.characters.items" 
+                        :key="personaje.name">
+                            <router-link :to= "{ name: 'character', 
+                            params: {name: personaje.name, url: personaje.resourceURI} }">
+                                {{personaje.name}}
+                            </router-link>
+                        </li>
+                    </ul>
+                    <p class="texto--contenedor__liteartura" v-else>
+                    Lo sentimos, los personajes de esta historia se han convertido en polvo por culpa de Thanos. Le rogamos paciencia, los vengadores estan trabajando para solucionarlo. </p>
+                </div>
+                <div class="texto--contenedor">
+                    <p class="texto--contenedor__titulo">Price:</p>
+                    <div v-for= "precio in libro.prices" :key="precio.price">
+                        <p class="texto--contenedor__liteartura"
+                        v-if= "precio.price != 0 || null">
+                        {{precio.price}}</p>
+                        <p class="texto--contenedor__liteartura" v-else>
+                        ¡GRATIS!</p>
+                    </div>
+                </div>
+                <router-link class="enrutador" to= '/'>
+                    <button class="btn-volver">Inicio</button>
+                </router-link>    
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 
@@ -57,8 +61,10 @@ export default {
  a trabes del enrutador */ 
             libroid: this.$route.params.id,
             novelagrafica: [],
-            url: '',
-            size: 'portrait_uncanny.jpg',
+            image: {
+                url: '',
+                size: 'portrait_uncanny.jpg'
+            },
             error: {
                 status: false,
                 message: ''
@@ -71,9 +77,9 @@ export default {
             .then((result) =>{
                 result.data.data.results.forEach(item => {
                     this.novelagrafica.push(item)
-                    this.url = `${item.thumbnail.path}/${this.size}`
+                    this.image.url = `${item.thumbnail.path}/${this.image.size}`
                 })
-            }).catch((error) => {
+            }).catch(() => {
                 this.error.status = true;
                 this.error.message = 'Sorry. SHIELD is under attack right now. Try again later';
             })
@@ -102,11 +108,25 @@ export default {
 }
 
 .imagen{
-    justify-content: center;
+    justify-content: flex-start;
 }
 
 h2{
     margin: 0px
+}
+
+ul{
+    list-style-type: none;
+    padding: 0px;
+    margin-bottom: 0px;
+}
+
+li{
+    margin-bottom: 16px
+}
+
+a{
+    color: aqua;
 }
 
 .texto{
@@ -140,4 +160,8 @@ h2{
     color: rgb(233, 233, 193);
 }
 
+.error{
+    margin-top: 50vh;
+    color: red;
+}
 </style>

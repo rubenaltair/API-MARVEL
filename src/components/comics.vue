@@ -4,7 +4,8 @@
             <input type="text"  class="search" @keyup.enter = "getComics()" 
             v-model= "deseado" placeholder="Search">
         </div>
-        <div class="contenedor contenedor-fichas">
+        <h2 class="error" v-if="error.status">{{error.message}}</h2>
+        <div v-else class="contenedor contenedor-fichas">
             <div class="ficha" v-for = "libro in novelasgraficas" :key= "libro.id">
             <!-- /* Se emplea el router para que al clicar se abra la vista de la ficha comic 
             y se le pasa la id que le corresponde al comic seleccionado*/ -->
@@ -16,7 +17,7 @@
                 </div>
             </div> 
         </div>
-        <Pagination @page="setPage" :limitOfSet="url.limit" :limitOfPage="10" :total="total" v-if="!error.status"/>
+        <Pagination @page="setPage" :limitOfSet="url.limit" :limitOfPage="10" :total="url.total" v-if="!error.status"/>
     </div>
 </template>
 
@@ -33,11 +34,11 @@ export default {
         return{
             novelasgraficas: [],
             deseado: '',
-            total: 0,
             url: {
                urlBase: 'https://gateway.marvel.com:443/v1/public/comics?',
                page: 0,
                limit: 10,
+               total: 0
             },
             error: {
                 status: false,
@@ -64,11 +65,11 @@ export default {
                 this.url.page = 0;
                 this.error.status =false;
                 this.novelasgraficas = [];
-                this.total = result.data.data.total
+                this.url.total = result.data.data.total
                 result.data.data.results.forEach(item => { 
                     this.novelasgraficas.push(item);
                 })
-            }).catch((error) => {
+            }).catch(() => {
                 this.error.status = true;
                 this.error.message = 'Sorry. SHIELD is under attack right now. Try again later';
             })
@@ -100,6 +101,7 @@ export default {
     width: calc(20% - 20px);
     margin: 30px 10px 10px;
 }
+
 .titulo-comic{
     size: 14px;
     font-weight: bold;
@@ -107,10 +109,12 @@ export default {
     height: 72px;
     color: rgb(233, 233, 193)
 }
+
 .navbar-home{
      background-color: rgb(248, 246, 246);
      padding: 5px;
 }
+
 .search{
     width: 250px;
     padding: 5px;
@@ -122,4 +126,8 @@ export default {
     border: 0px;
 }
 
+.error{
+    margin-top: 50vh;
+    color: red;
+}
 </style>

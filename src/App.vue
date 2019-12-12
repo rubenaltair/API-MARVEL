@@ -23,8 +23,12 @@ body{
   margin: 0px
 }
 html{
-  min-height: 100vh;
-  background-image: url("./assets/fondo-espacio5.jpg");
+  /* min-height: 100vh; */
+  background: url(./assets/fondo-espacio5.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
 }
 #app {
   -webkit-font-smoothing: antialiased;
